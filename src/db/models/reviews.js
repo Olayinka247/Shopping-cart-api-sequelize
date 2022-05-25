@@ -15,6 +15,10 @@ const Review = sequelize.define("review", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  productId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+  },
 });
 
 export default Review;

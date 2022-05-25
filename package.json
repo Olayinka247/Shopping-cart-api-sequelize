@@ -25,6 +25,8 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-list-endpoints": "^6.0.0",
+    "https-error": "^1.0.2",
+    "kill-port": "^2.0.0",
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.20.0"
