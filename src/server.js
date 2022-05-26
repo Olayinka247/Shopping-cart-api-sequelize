@@ -12,6 +12,7 @@ import {
   notFoundError,
   unauthorizedError,
 } from "./errorHandlers.js";
+import categoryRouter from "./services/category/index.js";
 
 const server = express();
 
@@ -24,6 +25,7 @@ server.use(cors());
 // END POINTS
 server.use("/products", productRouter);
 server.use("/reviews", reviewRouter);
+server.use("/category", categoryRouter);
 
 //ERROR HANDLERS
 server.use(badRequestError);
@@ -37,7 +39,7 @@ const initalize = async () => {
       console.table(listEndpoints(server));
       console.log("✅ Server is listening on port " + PORT);
       await testDB(); // TESTING  DATA BASE CONNECTION
-      await sequelize.sync();
+      await sequelize.sync({ force: true }); // FORCE SYNC DB
     });
 
     server.on("error", (error) => {
