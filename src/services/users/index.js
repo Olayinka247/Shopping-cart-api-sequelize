@@ -1,13 +1,16 @@
 import express from "express";
 import models from "../../db/models/index.js";
 
-const { User } = models;
+const { User, Review } = models;
 
 const userRouter = express.Router();
 
 userRouter.get("/", async (req, res, next) => {
   try {
-    const users = await User.findAll();
+    const users = await User.findAll({
+      include: Review,
+      attributes: ["text", "username"],
+    });
     res.send(users);
   } catch (error) {
     console.log(error);
@@ -16,7 +19,9 @@ userRouter.get("/", async (req, res, next) => {
 
   userRouter.get("/:userId", async (req, res, next) => {
     try {
-      const user = await User.findByPk(req.params.userId);
+      const user = await User.findByPk(req.params.userId, {
+        include: { model: Review, attributes: ["text", "username"] },
+      });
       if (!user) {
         res.status(404).send("Not found");
       } else {
