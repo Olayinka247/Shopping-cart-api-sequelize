@@ -7,6 +7,6 @@ const { Cart, Product } = models;
 const cartRouter = express.Router();
 
 // delete a product from cart
-cartRouter.delete("/:productId", async (req, res, next) => {
+cartRouter.delete("/:productId", async (req, res, next) => {});
 
 export default cartRouter;

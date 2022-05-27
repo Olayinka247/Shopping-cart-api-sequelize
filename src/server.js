@@ -13,6 +13,7 @@ import {
 } from "./errorHandlers.js";
 import categoryRouter from "./services/category/index.js";
 import userRouter from "./services/user/index.js";
+import cartRouter from "./services/cart/index.js";
 import sequelize from "./db/index.js";
 
 const server = express();
@@ -28,6 +29,7 @@ server.use("/products", productRouter);
 server.use("/reviews", reviewRouter);
 server.use("/category", categoryRouter);
 server.use("/users", userRouter);
+server.use("/carts", cartRouter);
 
 //ERROR HANDLERS
 server.use(badRequestError);

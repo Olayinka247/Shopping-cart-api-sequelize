@@ -2,7 +2,7 @@ import express from "express";
 import models from "../../db/models/index.js";
 import { Op } from "sequelize";
 
-const { Product, Review, User, productCategory, Category } = models;
+const { Product, Review, User, productCategory, Category, Like } = models;
 
 const productRouter = express.Router();
 
@@ -95,6 +95,31 @@ productRouter.delete("/:productId", async (req, res, next) => {
       where: { id: req.params.productId },
     });
     res.send({ rows });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+// ENDPOINT TO ADD LIKE TO PRODUCT
+
+productRouter.post("/likes", async (req, res, next) => {
+  try {
+    const { productId, userId } = req.body;
+    const like = await Like.create({ productId, userId, like });
+    res.send(like);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+//create route to unlike a product
+
+productRouter.delete("/likes/:likeId", async (req, res, next) => {
+  try {
+    const unlike = await Like.destroy({ where: { id: req.params.likeId } });
+    res.send({ unlike });
   } catch (error) {
     console.log(error);
     next(error);

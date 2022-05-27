@@ -3,6 +3,8 @@ import Product from "./products.js";
 import User from "./user.js";
 import Category from "./category.js";
 import productCategory from "./productCategory.js";
+import Like from "./likes.js";
+import Cart from "./cart.js";
 
 Product.hasMany(Review);
 Review.belongsTo(Product);
@@ -20,6 +22,20 @@ Product.belongsToMany(Category, {
 Product.belongsTo(User);
 User.hasMany(Product);
 
-//add like to product
+Product.belongsToMany(User, {
+  through: { model: Like, unique: false },
+  onDelete: "CASCADE",
+});
 
-export default { Product, Review, Category, User, productCategory };
+User.belongsToMany(Product, {
+  through: { model: Like, unique: false },
+  onDelete: "CASCADE",
+});
+
+User.hasMany(Cart, { onDelete: "CASCADE" });
+Cart.belongsTo(User, { onDelete: "CASCADE" });
+
+Product.hasMany(Cart, { onDelete: "CASCADE" });
+Cart.belongsTo(Product, { onDelete: "CASCADE" });
+
+export default { Product, Review, Category, User, productCategory, Like, Cart };
