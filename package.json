@@ -25,6 +25,7 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-list-endpoints": "^6.0.0",
+    "heroku": "^7.60.2",
     "https-error": "^1.0.2",
     "kill-port": "^2.0.0",
     "pg": "^8.7.3",

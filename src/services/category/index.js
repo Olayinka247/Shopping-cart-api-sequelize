@@ -18,12 +18,12 @@ categoryRouter.get("/", async (req, res, next) => {
 categoryRouter.post("/", async (req, res, next) => {
   try {
     const category = await Category.bulkCreate([
-      { name: "Fashion" },
+      { name: "Technology" },
       { name: "Electronics" },
-      { name: "Home" },
-      { name: "Sports" },
-      { name: "Toys" },
-      { name: "Books" },
+      { name: "SmartPhones" },
+      { name: "Tablets" },
+      { name: "Computers" },
+      { name: "Tv" },
     ]);
     res.send(category);
   } catch (error) {
