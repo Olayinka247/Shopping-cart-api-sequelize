@@ -18,7 +18,9 @@ reviewRouter.get("/", async (req, res, next) => {
 //ENDPOINT TO GET REVIEW BY ID
 reviewRouter.get("/:reviewId", async (req, res, next) => {
   try {
-    const review = await Review.findByPk(req.params.reviewId);
+    const review = await Review.findByPk(req.params.reviewId, {
+      include: { model: Product },
+    });
     if (!review) {
       res.status(404).send("Not found");
     } else {
@@ -33,7 +35,10 @@ reviewRouter.get("/:reviewId", async (req, res, next) => {
 // ENDPOINT TO POST NEW REVIEW
 reviewRouter.post("/", async (req, res, next) => {
   try {
-    const newReview = await Review.create(req.body);
+    const newReview = await Review.create(req.body, {
+      where: { productId: req.body.productId },
+      returning: true,
+    });
     res.send(newReview);
   } catch (error) {
     console.log(error);

@@ -1,8 +1,8 @@
 import express from "express";
-import Category from "../../db/models/category.js";
 import models from "../../db/models/index.js";
+// import { Op } from "sequelize";
 
-const { Product, Review, User, productCategory } = models;
+const { Product, Review } = models;
 
 const productRouter = express.Router();
 
@@ -10,23 +10,23 @@ const productRouter = express.Router();
 productRouter.get("/", async (req, res, next) => {
   try {
     const products = await Product.findAll({
-      where: req.query.search && {
-        [Op.or]: [
-          { name: { [Op.iLike]: `%${req.query.search}%` } },
-          { description: { [Op.iLike]: `%${req.query.search}%` } },
-        ],
-      },
-      include: [
-        User,
-        {
-          model: Review,
-          include: { model: User, attributes: ["name", "lastName"] },
-        },
-        { model: Category, through: { attributes: [] } },
-      ],
-      offset: req.query.limit * req.query.offset,
-      limit: req.query.limit,
-      order: [["createdAt", "DESC"]],
+      // where: req.query.search && {
+      //   [Op.or]: [
+      //     { name: { [Op.iLike]: `%${req.query.search}%` } },
+      //     { description: { [Op.iLike]: `%${req.query.search}%` } },
+      //   ],
+      // },
+      // include: [
+      //   User,
+      //   {
+      //     model: Review,
+      //     include: { model: User, attributes: ["name", "lastName"] },
+      //   },
+      //   { model: Category, through: { attributes: [] } },
+      // ],
+      // offset: req.query.limit * req.query.offset,
+      // limit: req.query.limit,
+      // order: [["createdAt", "DESC"]],
     });
     res.send(products);
   } catch (error) {
@@ -55,26 +55,29 @@ productRouter.get("/:productId", async (req, res, next) => {
 //ENDPOINT TO POST NEW PRODUCTS
 productRouter.post("/", async (req, res, next) => {
   try {
-    const { name, description, price, imageUrl, categories } = req.body;
-    const product = await Product.create({
-      name,
-      description,
-      price,
-      imageUrl,
+    // const { name, description, price, imageUrl, categories } = req.body;
+    // const product = await Product.create({
+    //   name,
+    //   description,
+    //   price,
+    //   imageUrl,
+    // });
+    // res.send(product);
+    // const productsId = product.productId;
+    // const data = [];
+    // if (categories) {
+    //   categories.forEach((category) => {
+    //     data.push({
+    //       productsId,
+    //       category,
+    //     });
+    //   });
+    //   await productCategory.bulkCreate(data);
+    const product = await Product.create(req.body, {
+      returning: true,
     });
+
     res.send(product);
-    const productsId = product.productId;
-    const data = [];
-    if (categories) {
-      categories.forEach((category) => {
-        data.push({
-          productsId,
-          category,
-        });
-      });
-      await productCategory.bulkCreate(data);
-      res.send(product);
-    }
   } catch (error) {
     console.log(error);
     next(error);
