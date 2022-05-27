@@ -1,8 +1,8 @@
 import express from "express";
 import models from "../../db/models/index.js";
-// import { Op } from "sequelize";
+import { Op } from "sequelize";
 
-const { Product, Review } = models;
+const { Product, Review, User, productCategory, Category } = models;
 
 const productRouter = express.Router();
 
@@ -10,28 +10,32 @@ const productRouter = express.Router();
 productRouter.get("/", async (req, res, next) => {
   try {
     const products = await Product.findAll({
-      // where: req.query.search && {
-      //   [Op.or]: [
-      //     { name: { [Op.iLike]: `%${req.query.search}%` } },
-      //     { description: { [Op.iLike]: `%${req.query.search}%` } },
-      //   ],
-      // },
-      // include: [
-      //   User,
-      //   {
-      //     model: Review,
-      //     include: { model: User, attributes: ["name", "lastName"] },
-      //   },
-      //   { model: Category, through: { attributes: [] } },
-      // ],
-      // offset: req.query.limit * req.query.offset,
-      // limit: req.query.limit,
-      // order: [["createdAt", "DESC"]],
+      where: req.query.search && {
+        [Op.or]: [
+          {
+            name: {
+              [Op.iLike]: `%${req.query.search}%`,
+            },
+          },
+          {
+            description: {
+              [Op.iLike]: `%${req.query.search}%`,
+            },
+          },
+        ],
+      },
+      include: [
+        User,
+        { model: Review, attributes: ["text"] },
+
+        { model: Category, Review },
+      ],
+      order: [["price", "ASC"]],
     });
+
     res.send(products);
-  } catch (error) {
-    console.log(error);
-    next(error);
+  } catch (err) {
+    next(err);
   }
 });
 
@@ -55,32 +59,18 @@ productRouter.get("/:productId", async (req, res, next) => {
 //ENDPOINT TO POST NEW PRODUCTS
 productRouter.post("/", async (req, res, next) => {
   try {
-    // const { name, description, price, imageUrl, categories } = req.body;
-    // const product = await Product.create({
-    //   name,
-    //   description,
-    //   price,
-    //   imageUrl,
-    // });
-    // res.send(product);
-    // const productsId = product.productId;
-    // const data = [];
-    // if (categories) {
-    //   categories.forEach((category) => {
-    //     data.push({
-    //       productsId,
-    //       category,
-    //     });
-    //   });
-    //   await productCategory.bulkCreate(data);
-    const product = await Product.create(req.body, {
-      returning: true,
-    });
-
+    const { name, description, price, image, categories } = req.body;
+    const product = await Product.create({ name, description, price, image });
     res.send(product);
-  } catch (error) {
-    console.log(error);
-    next(error);
+    const productId = product.id;
+    const data = [];
+    categories.forEach((categoryId) => {
+      data.push({ productId, categoryId });
+    });
+    await productCategory.bulkCreate(data);
+    res.send(product);
+  } catch (err) {
+    next(err);
   }
 });
 
